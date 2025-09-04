@@ -1,0 +1,59 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "title": "Introducción a Angular",
+      "description": "Aprende los fundamentos de Angular desde cero",
+      "teacher": "María García"
+    },
+    {
+      "id": "2",
+      "title": "TypeScript Avanzado",
+      "description": "Domina las características avanzadas de TypeScript",
+      "teacher": "Juan Pérez"
+    },
+    {
+      "id": "3",
+      "title": "RxJS y Programación Reactiva",
+      "description": "Manejo de datos asíncronos con RxJS",
+      "teacher": "Ana López"
+    }
+  ],
+  "students": [
+    {
+      "id": "1",
+      "name": "Carlos Rodríguez",
+      "email": "carlos@email.com"
+    },
+    {
+      "id": "2",
+      "name": "Laura Martínez",
+      "email": "laura@email.com"
+    },
+    {
+      "id": "3",
+      "name": "Diego Fernández",
+      "email": "diego@email.com"
+    }
+  ],
+  "enrollments": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "courseId": "1",
+      "date": "2025-09-01"
+    },
+    {
+      "id": "2",
+      "studentId": "2",
+      "courseId": "1",
+      "date": "2025-09-02"
+    },
+    {
+      "id": "3",
+      "studentId": "1",
+      "courseId": "2",
+      "date": "2025-09-03"
+    }
+  ]
+}
