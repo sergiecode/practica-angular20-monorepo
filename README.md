@@ -223,9 +223,3 @@ software-company/
 - 🧵 [Threads](https://www.threads.net/@sergiecode)
 - � [TikTok](https://www.tiktok.com/@sergiecode)
 - � [Facebook](https://www.facebook.com/sergiecodeok)
-
----
-
-⭐ **¿Te gustó este tutorial?** ¡Dale una estrella al repositorio y compártelo!
-
-📝 **¿Encontraste algún error?** Abre un issue o envía un pull request.
