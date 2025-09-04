@@ -11,6 +11,7 @@ Este tutorial cubre las dos principales estrategias para trabajar con Nx + Angul
 - [Opción 2: Angular Standalone Monorepo](#opción-2-angular-standalone-monorepo)
 - [Comparación de Estrategias](#comparación-de-estrategias)
 - [Mejores Prácticas](#mejores-prácticas)
+- [Build, Versionado y Deployment](#build-versionado-y-deployment)
 - [Acerca del Autor](#acerca-del-autor)
 
 ## Estrategias de Monorepo
@@ -206,6 +207,116 @@ software-company/
 - Tu proyecto es 100% Angular
 - Quieres una configuración más simple
 - Prefieres convenciones predefinidas
+
+---
+
+## Build, Versionado y Deployment
+
+### 🛠️ Construcción de Aplicaciones y Librerías
+
+#### **¿Se construyen por separado?**
+
+**✅ Sí**, cada aplicación y librería se construye de forma independiente debido a:
+
+- 🎯 **Dependencias específicas**: Cada proyecto maneja sus propias dependencias y configuraciones
+- ⚡ **Optimización**: Aprovecha la caché de Nx para evitar reconstrucciones innecesarias
+- 📈 **Escalabilidad**: Facilita la gestión de proyectos grandes y complejos
+
+**Comandos de construcción:**
+```bash
+# Construir una aplicación específica
+npx nx build app1
+
+# Construir una librería específica
+npx nx build ui-shared
+
+# Construir múltiples proyectos
+npx nx run-many --target=build --projects=app1,app2,ui-shared
+```
+
+#### **¿Se versionan por separado?**
+
+**✅ Sí**, es recomendable versionar cada proyecto independientemente usando **Nx Release**:
+
+**Beneficios del versionado independiente:**
+- 📋 **Commits convencionales**: Automatiza el versionado basado en mensajes de commit
+- 📝 **Changelog automático**: Genera changelogs automáticamente
+- 🚀 **Publicación independiente**: Facilita releases por proyecto
+
+**Configuración de Nx Release:**
+```bash
+# Configurar Nx Release
+npx nx g @nx/js:release-configuration
+
+# Generar una nueva release
+npx nx release
+```
+
+> 📖 **Documentación oficial**: [Nx Release](https://nx.dev/features/manage-releases)
+
+#### **¿Se despliegan por separado?**
+
+**✅ Sí**, cada proyecto se despliega independientemente:
+
+**Proceso de deployment:**
+
+1. **Construir el proyecto**:
+   ```bash
+   npx nx build <nombre-del-proyecto>
+   ```
+
+2. **Generar archivos con dependencias**:
+   ```bash
+   npx nx build <nombre-del-proyecto> --with-deps
+   ```
+
+3. **Desplegar usando tu plataforma preferida**:
+   - ☁️ **AWS S3/CloudFront**
+   - 🌐 **Netlify/Vercel**
+   - 🔵 **Azure Static Web Apps**
+   - 🐳 **Docker containers**
+
+### ☁️ Integración con Nx Cloud
+
+**Nx Cloud** proporciona capacidades avanzadas de optimización:
+
+#### **🚀 Características Principales**
+
+- 📦 **Caché distribuida**: Reutiliza resultados entre desarrolladores y CI/CD
+- ⚡ **Ejecución distribuida**: Ejecuta tareas en paralelo en múltiples agentes
+- 📊 **Monitoreo avanzado**: Visualización de performance y bottlenecks
+- 🔧 **CI/CD optimizado**: Reduce significativamente los tiempos de build
+
+#### **⚙️ Configuración**
+
+```bash
+# Conectar workspace a Nx Cloud
+npx nx connect-to-nx-cloud
+
+# Verificar configuración
+npx nx show project <nombre-proyecto> --web
+```
+
+#### **📈 Beneficios de Performance**
+
+```bash
+# Sin Nx Cloud
+Build Time: ~15 minutos
+
+# Con Nx Cloud (cache hit)
+Build Time: ~2 minutos (87% reducción)
+```
+
+> 📖 **Más información**: [Nx Cloud Documentation](https://nx.dev/nx-cloud)
+
+### ✅ Resumen de Estrategias
+
+| 🏗️ **Aspecto** | 📦 **Enfoque** | 🎯 **Beneficio** |
+|-----------------|----------------|-------------------|
+| **Construcción** | Independiente por proyecto | Optimización y caché eficiente |
+| **Versionado** | Semantic versioning individual | Control granular de releases |
+| **Deployment** | Por aplicación/librería | Despliegues focalizados y rápidos |
+| **CI/CD** | Nx Cloud + pipelines optimizados | Reducción drástica de tiempos |
 
 ---
 
