@@ -89,6 +89,109 @@ software-company/
     └── utils-common/
 ```
 
+## 🟦 Agregar React con TypeScript al monorepo Nx
+
+### 1. Instalar plugin de React
+
+Primero necesitás el plugin oficial de React de Nx:
+
+```bash
+npx nx add @nx/react
+```
+
+Esto habilita los generadores (g) de aplicaciones y librerías en React.
+
+### 2. Crear una aplicación React + TypeScript
+
+Vamos a crearla dentro de `packages/` para mantener la estructura ordenada:
+
+```bash
+npx nx g @nx/react:application packages/react-app --style=css --bundler=vite --routing
+```
+
+👉 **Explicación de flags:**
+
+- `--style=css` → estilos con CSS plano.
+- `--bundler=vite` → más rápido que webpack, recomendado.
+- `--routing` → agrega React Router configurado.
+
+Ahora podés correrla con:
+
+```bash
+npx nx serve react-app --port=4300
+```
+
+### 3. Crear un helper compartido
+
+Vamos a crear un helper en TypeScript que tanto Angular como React puedan usar. Por ejemplo una librería `utils-helpers`:
+
+```bash
+npx nx g @nx/js:lib packages/utils-helpers --bundler=tsc --unitTestRunner=jest
+```
+
+Esto te genera una librería en `packages/utils-helpers`.
+
+Dentro de `packages/utils-helpers/src/lib/format-date.ts` podés poner algo simple:
+
+```typescript
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+```
+
+### 4. Usar el helper en React
+
+En `packages/react-app/src/app/app.tsx`:
+
+```typescript
+import { formatDate } from '@software-company/utils-helpers';
+
+export function App() {
+  const today = new Date();
+  return (
+    <div>
+      <h1>React App usando helper compartido</h1>
+      <p>Hoy es: {formatDate(today)}</p>
+    </div>
+  );
+}
+```
+
+### 5. Usar el helper en Angular
+
+En `packages/app1/src/app/app.ts`:
+
+```typescript
+import { Component } from '@angular/core';
+import { formatDate } from '@software-company/utils-helpers';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: `
+    <h1>Angular App usando helper compartido</h1>
+    <p>Hoy es: {{ today }}</p>
+  `,
+})
+export class AppComponent {
+  today = formatDate(new Date());
+}
+```
+
+### 6. Visualizar dependencias
+
+Para comprobar cómo Nx entiende la relación entre los proyectos:
+
+```bash
+npx nx graph
+```
+
+Vas a ver las apps Angular + React conectadas con la librería `utils-helpers`. 🎯
+
 ## Opción 2: Angular Standalone Monorepo
 
 > 💡 **Ideal para**: Proyectos 100% Angular con una aplicación principal tipo shell
