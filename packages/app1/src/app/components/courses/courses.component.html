@@ -9,10 +9,10 @@
       @for (course of courses; track course.id) {
         <shared-course-card [course]="course">
           <shared-button 
-            variant="success" 
-            [disabled]="isEnrolling"
+            [variant]="getButtonVariant(course.id)"
+            [disabled]="!canEnroll(course.id)"
             (click)="enrollInCourse(course.id)">
-            {{ isEnrolling ? 'Inscribiendo...' : 'Inscribirse' }}
+            {{ isEnrolling ? 'Inscribiendo...' : getButtonText(course.id) }}
           </shared-button>
         </shared-course-card>
       }

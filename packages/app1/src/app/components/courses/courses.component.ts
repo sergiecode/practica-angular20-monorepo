@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 import { 
   Course, 
   ApiService, 
@@ -8,6 +9,7 @@ import {
   CourseCardComponent, 
   ButtonComponent 
 } from '@software-company-npm-based/ui-shared';
+import { SimpleUserService } from '../../app';
 
 @Component({
   selector: 'app-courses',
@@ -15,29 +17,47 @@ import {
   templateUrl: './courses.component.html',
   styleUrl: './courses.component.css'
 })
-export class CoursesComponent implements OnInit {
+export class CoursesComponent implements OnInit, OnDestroy {
   courses: Course[] = [];
   loading = true;
   error: string | null = null;
   isEnrolling = false;
-
-  // Simulamos un estudiante fijo para el ejemplo
-  private readonly CURRENT_STUDENT_ID = '1';
+  enrollmentStatus: { [courseId: string]: boolean } = {}; // Para trackear inscripciones
+  
+  private unsubscribe?: () => void;
 
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.loadCourses();
+    this.loadCoursesAndEnrollments();
+    
+    // Suscribirse a cambios de usuario
+    this.unsubscribe = SimpleUserService.subscribe((newUserId) => {
+      // Cuando cambia el usuario, recargar los cursos para actualizar el estado
+      this.loadCoursesAndEnrollments();
+    });
   }
 
-  private loadCourses(): void {
+  ngOnDestroy(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
+  private getCurrentStudentId(): string {
+    return SimpleUserService.getCurrentUserId();
+  }
+
+  private loadCoursesAndEnrollments(): void {
     this.loading = true;
     this.error = null;
+    const currentStudentId = this.getCurrentStudentId();
 
     this.apiService.getCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
-        this.loading = false;
+        // Para cada curso, verificar si el usuario está inscripto
+        this.checkEnrollmentStatus(courses, currentStudentId);
       },
       error: (error) => {
         console.error('Error loading courses:', error);
@@ -47,42 +67,63 @@ export class CoursesComponent implements OnInit {
     });
   }
 
+  private checkEnrollmentStatus(courses: Course[], studentId: string): void {
+    const enrollmentChecks = courses.map(course => 
+      this.apiService.isStudentEnrolledInCourse(studentId, course.id)
+    );
+
+    // Usar Promise.all para esperar todas las verificaciones
+    Promise.all(enrollmentChecks.map(obs => lastValueFrom(obs))).then(results => {
+      this.enrollmentStatus = {};
+      courses.forEach((course, index) => {
+        this.enrollmentStatus[course.id] = results[index] || false;
+      });
+      this.loading = false;
+    }).catch(error => {
+      console.error('Error checking enrollment status:', error);
+      this.loading = false;
+    });
+  }
+
+  isEnrolledInCourse(courseId: string): boolean {
+    return this.enrollmentStatus[courseId] || false;
+  }
+
+  getButtonText(courseId: string): string {
+    return this.isEnrolledInCourse(courseId) ? 'Ya inscripto' : 'Inscribirse';
+  }
+
+  getButtonVariant(courseId: string): "primary" | "secondary" | "success" | "danger" {
+    return this.isEnrolledInCourse(courseId) ? 'secondary' : 'success';
+  }
+
+  canEnroll(courseId: string): boolean {
+    return !this.isEnrolledInCourse(courseId) && !this.isEnrolling;
+  }
+
   enrollInCourse(courseId: string): void {
-    if (this.isEnrolling) return;
+    if (this.isEnrolling || this.isEnrolledInCourse(courseId)) return;
 
     this.isEnrolling = true;
+    const currentStudentId = this.getCurrentStudentId();
 
-    // Primero verificamos si el estudiante ya está inscrito
-    this.apiService.isStudentEnrolledInCourse(this.CURRENT_STUDENT_ID, courseId).subscribe({
-      next: (isEnrolled) => {
-        if (isEnrolled) {
-          alert('Ya estás inscrito en este curso');
-          this.isEnrolling = false;
-          return;
-        }
+    // Crear la inscripción directamente ya que sabemos que no está inscripto
+    const enrollmentRequest: CreateEnrollmentRequest = {
+      studentId: currentStudentId,
+      courseId: courseId,
+      date: new Date().toISOString().split('T')[0] // Formato YYYY-MM-DD
+    };
 
-        // Crear la inscripción
-        const enrollmentRequest: CreateEnrollmentRequest = {
-          studentId: this.CURRENT_STUDENT_ID,
-          courseId: courseId,
-          date: new Date().toISOString().split('T')[0] // Formato YYYY-MM-DD
-        };
-
-        this.apiService.createEnrollment(enrollmentRequest).subscribe({
-          next: () => {
-            alert('¡Te has inscrito exitosamente en el curso!');
-            this.isEnrolling = false;
-          },
-          error: (error) => {
-            console.error('Error enrolling in course:', error);
-            alert('Error al inscribirse en el curso. Inténtalo de nuevo.');
-            this.isEnrolling = false;
-          }
-        });
+    this.apiService.createEnrollment(enrollmentRequest).subscribe({
+      next: () => {
+        alert('¡Te has inscrito exitosamente en el curso!');
+        this.isEnrolling = false;
+        // Actualizar el estado local
+        this.enrollmentStatus[courseId] = true;
       },
       error: (error) => {
-        console.error('Error checking enrollment:', error);
-        alert('Error al verificar la inscripción. Inténtalo de nuevo.');
+        console.error('Error enrolling in course:', error);
+        alert('Error al inscribirse en el curso. Inténtalo de nuevo.');
         this.isEnrolling = false;
       }
     });

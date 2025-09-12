@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { 
   EnrollmentWithDetails, 
   ApiService 
@@ -9,6 +9,7 @@ import {
   TableAction,
   ButtonComponent 
 } from '@software-company-npm-based/ui-shared';
+import { SimpleUserService } from '../../app';
 
 @Component({
   selector: 'app-my-enrollments',
@@ -16,10 +17,12 @@ import {
   templateUrl: './my-enrollments.component.html',
   styleUrl: './my-enrollments.component.css'
 })
-export class MyEnrollmentsComponent implements OnInit {
+export class MyEnrollmentsComponent implements OnInit, OnDestroy {
   enrollments: EnrollmentWithDetails[] = [];
   loading = true;
   error: string | null = null;
+  
+  private unsubscribe?: () => void;
 
   // Configuración de la tabla
   tableColumns: TableColumn[] = [
@@ -37,20 +40,34 @@ export class MyEnrollmentsComponent implements OnInit {
     }
   ];
 
-  // Simulamos un estudiante fijo para el ejemplo
-  private readonly CURRENT_STUDENT_ID = '1';
-
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.loadEnrollments();
+    
+    // Suscribirse a cambios de usuario
+    this.unsubscribe = SimpleUserService.subscribe((newUserId) => {
+      // Cuando cambia el usuario, recargar las inscripciones
+      this.loadEnrollments();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
+  private getCurrentStudentId(): string {
+    return SimpleUserService.getCurrentUserId();
   }
 
   loadEnrollments(): void {
     this.loading = true;
     this.error = null;
+    const currentStudentId = this.getCurrentStudentId();
 
-    this.apiService.getStudentEnrollmentsWithDetails(this.CURRENT_STUDENT_ID).subscribe({
+    this.apiService.getStudentEnrollmentsWithDetails(currentStudentId).subscribe({
       next: (enrollments) => {
         this.enrollments = enrollments;
         this.loading = false;
