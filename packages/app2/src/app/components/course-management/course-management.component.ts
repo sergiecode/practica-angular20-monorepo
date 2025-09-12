@@ -10,12 +10,13 @@ import {
   TableComponent, 
   TableColumn, 
   TableAction,
-  ButtonComponent 
+  ButtonComponent,
+  CourseCardComponent 
 } from '@software-company-npm-based/ui-shared';
 
 @Component({
   selector: 'app-course-management',
-  imports: [FormsModule, TableComponent, ButtonComponent],
+  imports: [FormsModule, TableComponent, ButtonComponent, CourseCardComponent],
   templateUrl: './course-management.component.html',
   styleUrl: './course-management.component.css'
 })
@@ -77,6 +78,12 @@ export class CourseManagementComponent implements OnInit {
 
   saveCourse(): void {
     if (this.isSubmitting) return;
+
+    // Validar que todos los campos requeridos estén llenos
+    if (!this.isFormValid()) {
+      alert('Por favor, completa todos los campos requeridos.');
+      return;
+    }
 
     this.isSubmitting = true;
 
@@ -143,6 +150,14 @@ export class CourseManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  isFormValid(): boolean {
+    return !!(
+      this.courseForm.title?.trim() &&
+      this.courseForm.description?.trim() &&
+      this.courseForm.teacher?.trim()
+    );
   }
 
   private resetForm(): void {
