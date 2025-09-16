@@ -1,15 +1,15 @@
 // Tests simples para MyEnrollmentsComponent con Jest
 // Estos tests verifican la funcionalidad básica del componente de inscripciones
 
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { MyEnrollmentsComponent } from './my-enrollments.component';
-import { ApiService } from '@software-company-npm-based/utils-common';
+import { ApiService, EnrollmentWithDetails } from '@software-company-npm-based/utils-common';
 import { of } from 'rxjs';
 
 describe('MyEnrollmentsComponent - Tests Simples', () => {
   let component: MyEnrollmentsComponent;
-  let fixture: any;
-  let apiServiceMock: any;
+  let fixture: ComponentFixture<MyEnrollmentsComponent>;
+  let apiServiceMock: Partial<ApiService>;
 
   beforeEach(async () => {
     // Creamos un mock simple del ApiService
@@ -74,9 +74,21 @@ describe('MyEnrollmentsComponent - Tests Simples', () => {
   });
 
   describe('Funcionalidad básica', () => {
-    it('debería poder llamar cancelEnrollment con un string', () => {
+    it('debería poder llamar cancelEnrollment con un objeto enrollment', () => {
       // Test: Verificamos que podemos llamar el método con parámetros correctos
-      expect(() => component.cancelEnrollment('1')).not.toThrow();
+      const mockEnrollment: EnrollmentWithDetails = { 
+        id: '1', 
+        studentId: '1', 
+        courseId: '1',
+        date: '2024-01-01',
+        course: {
+          id: '1',
+          title: 'Test Course',
+          description: 'Test Description',
+          teacher: 'Test Teacher'
+        }
+      };
+      expect(() => component.cancelEnrollment(mockEnrollment)).not.toThrow();
     });
 
     it('debería tener la propiedad enrollments como array', () => {

@@ -10,11 +10,10 @@ import { ApiService } from '@software-company-npm-based/utils-common';
 describe('CourseEnrollmentsComponent', () => {
   let component: CourseEnrollmentsComponent;
   let fixture: ComponentFixture<CourseEnrollmentsComponent>;
-  let mockApiService: any;
 
   beforeEach(async () => {
     // Creamos un spy object para ApiService
-    const apiServiceSpy = {
+    const apiServiceSpy: Partial<ApiService> = {
       getCourses: jest.fn().mockReturnValue(of([])),
       getCourseEnrollmentsWithDetails: jest.fn().mockReturnValue(of([]))
     };
@@ -29,7 +28,6 @@ describe('CourseEnrollmentsComponent', () => {
 
     fixture = TestBed.createComponent(CourseEnrollmentsComponent);
     component = fixture.componentInstance;
-    mockApiService = TestBed.inject(ApiService);
   });
 
   describe('Inicialización del componente', () => {

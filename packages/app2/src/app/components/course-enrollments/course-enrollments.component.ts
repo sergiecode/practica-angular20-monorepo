@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { 
   Course, 
@@ -33,7 +33,7 @@ export class CourseEnrollmentsComponent implements OnInit {
     { key: 'date', label: 'Fecha de Inscripción', sortable: true }
   ];
 
-  constructor(private apiService: ApiService) {}
+  private apiService = inject(ApiService);
 
   ngOnInit(): void {
     this.loadCourses();

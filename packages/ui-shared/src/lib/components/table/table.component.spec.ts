@@ -131,11 +131,13 @@ describe('TableComponent', () => {
       const sortableColumn = mockColumns.find(col => col.sortable);
       
       // Act: Hacemos clic para ordenar
-      component.onSort(sortableColumn!);
+      if (sortableColumn) {
+        component.onSort(sortableColumn);
 
-      // Assert: Verificamos que se configuró el ordenamiento
-      expect(component.sortColumn).toBe(sortableColumn!.key);
-      expect(component.sortDirection).toBe('asc');
+        // Assert: Verificamos que se configuró el ordenamiento
+        expect(component.sortColumn).toBe(sortableColumn.key);
+        expect(component.sortDirection).toBe('asc');
+      }
     });
 
     it('debería cambiar dirección de ordenamiento en clics sucesivos', () => {
@@ -162,10 +164,12 @@ describe('TableComponent', () => {
       const originalSortColumn = component.sortColumn;
 
       // Act: Intentamos ordenar por columna no sortable
-      component.onSort(nonSortableColumn!);
+      if (nonSortableColumn) {
+        component.onSort(nonSortableColumn);
 
-      // Assert: Verificamos que no cambió el ordenamiento
-      expect(component.sortColumn).toBe(originalSortColumn);
+        // Assert: Verificamos que no cambió el ordenamiento
+        expect(component.sortColumn).toBe(originalSortColumn);
+      }
     });
 
     it('debería emitir evento de ordenamiento', () => {
@@ -192,9 +196,9 @@ describe('TableComponent', () => {
       const sortedData = component.sortedData;
 
       // Assert: Verificamos que están ordenados alfabéticamente
-      expect(sortedData[0].name).toBe('Ana García');
-      expect(sortedData[1].name).toBe('Carlos López');
-      expect(sortedData[2].name).toBe('Juan Pérez');
+      expect((sortedData[0] as { name: string }).name).toBe('Ana García');
+      expect((sortedData[1] as { name: string }).name).toBe('Carlos López');
+      expect((sortedData[2] as { name: string }).name).toBe('Juan Pérez');
     });
 
     it('debería retornar datos ordenados en orden descendente', () => {
@@ -206,9 +210,9 @@ describe('TableComponent', () => {
       const sortedData = component.sortedData;
 
       // Assert: Verificamos orden descendente
-      expect(sortedData[0].name).toBe('Juan Pérez');
-      expect(sortedData[1].name).toBe('Carlos López');
-      expect(sortedData[2].name).toBe('Ana García');
+      expect((sortedData[0] as { name: string }).name).toBe('Juan Pérez');
+      expect((sortedData[1] as { name: string }).name).toBe('Carlos López');
+      expect((sortedData[2] as { name: string }).name).toBe('Ana García');
     });
   });
 

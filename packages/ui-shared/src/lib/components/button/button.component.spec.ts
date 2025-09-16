@@ -143,9 +143,9 @@ describe('ButtonComponent', () => {
   });
 
   describe('Eventos de salida (@Output)', () => {
-    it('debería emitir evento click cuando se hace clic y no está deshabilitado', () => {
+    it('debería emitir evento buttonClick cuando se hace clic y no está deshabilitado', () => {
       // Arrange: Configuramos un spy para detectar el evento
-      const emitSpy = jest.spyOn(component.click, 'emit');
+      const emitSpy = jest.spyOn(component.buttonClick, 'emit');
 
       // Act: Hacemos clic en el botón
       component.onClick();
@@ -155,10 +155,10 @@ describe('ButtonComponent', () => {
       expect(emitSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('NO debería emitir evento click cuando el botón está deshabilitado', () => {
+    it('NO debería emitir evento buttonClick cuando el botón está deshabilitado', () => {
       // Arrange: Deshabilitamos el botón y configuramos spy
       component.disabled = true;
-      const emitSpy = jest.spyOn(component.click, 'emit');
+      const emitSpy = jest.spyOn(component.buttonClick, 'emit');
 
       // Act: Intentamos hacer clic
       component.onClick();
@@ -167,9 +167,9 @@ describe('ButtonComponent', () => {
       expect(emitSpy).not.toHaveBeenCalled();
     });
 
-    it('debería emitir evento click cuando se hace clic en el elemento DOM', () => {
+    it('debería emitir evento buttonClick cuando se hace clic en el elemento DOM', () => {
       // Arrange: Configuramos spy para el evento
-      const emitSpy = jest.spyOn(component.click, 'emit');
+      const emitSpy = jest.spyOn(component.buttonClick, 'emit');
 
       // Act: Simulamos clic en el elemento del DOM
       const buttonElement = fixture.nativeElement.querySelector('button');

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { 
@@ -44,7 +44,7 @@ export class App implements OnInit {
   students: Student[] = [];
   currentStudentId = '1'; // Valor por defecto simple
 
-  constructor(private apiService: ApiService) {}
+  private apiService = inject(ApiService);
 
   ngOnInit(): void {
     this.loadStudents();

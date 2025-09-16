@@ -35,11 +35,11 @@
   @if (selectedCourseId) {
     <div class="enrollments-table">
       @if (!loadingEnrollments && !error) {
-        <shared-table 
+        <lib-shared-table 
           [data]="enrollments"
           [columns]="tableColumns"
           noDataMessage="No hay estudiantes inscritos en este curso aún.">
-        </shared-table>
+        </lib-shared-table>
       }
 
       @if (loadingEnrollments) {
@@ -51,7 +51,7 @@
       @if (error) {
         <div class="error">
           <p>❌ Error: {{ error }}</p>
-          <shared-button (click)="loadEnrollments()">Reintentar</shared-button>
+          <lib-shared-button (buttonClick)="loadEnrollments()">Reintentar</lib-shared-button>
         </div>
       }
     </div>

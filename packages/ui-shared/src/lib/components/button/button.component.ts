@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'shared-button',
+  selector: 'lib-shared-button',
   imports: [],
   templateUrl: './button.component.html',
   styleUrl: './button.component.css'
@@ -11,7 +11,7 @@ export class ButtonComponent {
   @Input() variant: 'primary' | 'secondary' | 'success' | 'danger' = 'primary';
   @Input() size: 'small' | 'normal' | 'large' = 'normal';
   @Input() disabled = false;
-  @Output() click = new EventEmitter<void>();
+  @Output() buttonClick = new EventEmitter<void>();
 
   get buttonClasses(): string {
     const classes = ['btn', `btn-${this.variant}`];
@@ -25,7 +25,7 @@ export class ButtonComponent {
 
   onClick(): void {
     if (!this.disabled) {
-      this.click.emit();
+      this.buttonClick.emit();
     }
   }
 }

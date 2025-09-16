@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { 
   EnrollmentWithDetails, 
   ApiService 
@@ -36,17 +36,17 @@ export class MyEnrollmentsComponent implements OnInit, OnDestroy {
     {
       label: 'Cancelar',
       variant: 'danger',
-      onClick: (enrollment: EnrollmentWithDetails) => this.cancelEnrollment(enrollment)
+      onClick: (enrollment: unknown) => this.cancelEnrollment(enrollment as EnrollmentWithDetails)
     }
   ];
 
-  constructor(private apiService: ApiService) {}
+  private apiService = inject(ApiService);
 
   ngOnInit(): void {
     this.loadEnrollments();
     
     // Suscribirse a cambios de usuario
-    this.unsubscribe = SimpleUserService.subscribe((newUserId) => {
+    this.unsubscribe = SimpleUserService.subscribe(() => {
       // Cuando cambia el usuario, recargar las inscripciones
       this.loadEnrollments();
     });

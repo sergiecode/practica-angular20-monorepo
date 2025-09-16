@@ -8,8 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
 describe('App - Test Simple', () => {
-  let apiServiceMock: any;
-  let activatedRouteMock: any;
+  let apiServiceMock: Partial<ApiService>;
+  let activatedRouteMock: Partial<ActivatedRoute>;
 
   beforeEach(async () => {
     // Creamos un mock simple del ApiService

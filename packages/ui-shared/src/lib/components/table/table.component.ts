@@ -10,17 +10,17 @@ export interface TableAction {
   label: string;
   icon?: string;
   variant?: 'primary' | 'secondary' | 'success' | 'danger';
-  onClick: (item: any) => void;
+  onClick: (item: unknown) => void;
 }
 
 @Component({
-  selector: 'shared-table',
+  selector: 'lib-shared-table',
   imports: [],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css'
 })
 export class TableComponent {
-  @Input({ required: true }) data: any[] = [];
+  @Input({ required: true }) data: unknown[] = [];
   @Input({ required: true }) columns: TableColumn[] = [];
   @Input() actions?: TableAction[];
   @Input() noDataMessage = 'No hay datos disponibles';
@@ -29,19 +29,23 @@ export class TableComponent {
   sortColumn: string | null = null;
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  get sortedData(): any[] {
+  get sortedData(): unknown[] {
     if (!this.sortColumn) {
       return this.data;
     }
 
     return [...this.data].sort((a, b) => {
-      const aValue = this.getNestedValue(a, this.sortColumn!);
-      const bValue = this.getNestedValue(b, this.sortColumn!);
+      const aValue = this.getNestedValue(a, this.sortColumn as string);
+      const bValue = this.getNestedValue(b, this.sortColumn as string);
+      
+      // Convert to string for comparison to handle unknown types safely
+      const aStr = String(aValue ?? '');
+      const bStr = String(bValue ?? '');
       
       let comparison = 0;
-      if (aValue > bValue) {
+      if (aStr > bStr) {
         comparison = 1;
-      } else if (aValue < bValue) {
+      } else if (aStr < bStr) {
         comparison = -1;
       }
       
@@ -62,11 +66,11 @@ export class TableComponent {
     this.sort.emit({ column: column.key, direction: this.sortDirection });
   }
 
-  getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, prop) => current?.[prop], obj) ?? '';
+  getNestedValue(obj: unknown, path: string): unknown {
+    return path.split('.').reduce((current, prop) => (current as Record<string, unknown>)?.[prop], obj) ?? '';
   }
 
-  trackByFn(index: number, item: any): any {
-    return item.id || index;
+  trackByFn(index: number, item: unknown): unknown {
+    return (item as { id?: unknown })?.id || index;
   }
 }

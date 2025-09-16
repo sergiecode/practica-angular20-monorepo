@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { 
   Course, 
@@ -25,14 +25,13 @@ export class CoursesComponent implements OnInit, OnDestroy {
   enrollmentStatus: { [courseId: string]: boolean } = {}; // Para trackear inscripciones
   
   private unsubscribe?: () => void;
-
-  constructor(private apiService: ApiService) {}
+  private apiService = inject(ApiService);
 
   ngOnInit(): void {
     this.loadCoursesAndEnrollments();
     
     // Suscribirse a cambios de usuario
-    this.unsubscribe = SimpleUserService.subscribe((newUserId) => {
+    this.unsubscribe = SimpleUserService.subscribe(() => {
       // Cuando cambia el usuario, recargar los cursos para actualizar el estado
       this.loadCoursesAndEnrollments();
     });

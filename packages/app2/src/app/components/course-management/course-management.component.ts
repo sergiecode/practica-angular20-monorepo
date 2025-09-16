@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { 
   Course, 
@@ -44,16 +44,16 @@ export class CourseManagementComponent implements OnInit {
     {
       label: 'Editar',
       variant: 'primary',
-      onClick: (course: Course) => this.editCourse(course)
+      onClick: (course: unknown) => this.editCourse(course as Course)
     },
     {
       label: 'Eliminar',
       variant: 'danger',
-      onClick: (course: Course) => this.deleteCourse(course)
+      onClick: (course: unknown) => this.deleteCourse(course as Course)
     }
   ];
 
-  constructor(private apiService: ApiService) {}
+  private apiService = inject(ApiService);
 
   ngOnInit(): void {
     this.loadCourses();
